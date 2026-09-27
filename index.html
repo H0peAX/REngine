@@ -277,22 +277,62 @@
   .contact-inner{
     display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:24px;
   }
-  .contact h2{ font-size:30px; max-width:16ch; }
-  .contact-note{ font-size:14.5px; color:var(--dim); max-width:38ch; }
-  .contact-info{
-    display:flex; flex-direction:column; gap:10px;
-    font-family:'JetBrains Mono',monospace;
-    font-size:13.5px;
+  .contact h2{ font-size:30px; max-width:18ch; }
+
+  .contact-layout{
+    display:grid; grid-template-columns: 0.85fr 1.15fr; gap:48px; align-items:start;
   }
-  .contact-info a{ text-decoration:none; border-bottom:1px solid var(--line-strong); padding-bottom:1px; }
-  .contact-info a:hover{ color:var(--text); }
-  .contact-info .label{ color:var(--dim); margin-right:8px; }
+  .contact-note{ font-size:15.5px; color:var(--dim); max-width:38ch; padding-top:4px; }
+
+  .contact-cards{
+    display:flex; flex-direction:column; gap:1px;
+    background:var(--line); border:1px solid var(--line);
+  }
+  .contact-card{
+    display:flex; align-items:center; gap:18px;
+    background:var(--panel);
+    padding:22px 24px;
+    text-decoration:none; color:inherit;
+    transition:background .2s;
+  }
+  a.contact-card:hover{ background:var(--panel-2); }
+  a.contact-card:hover .value{ color:var(--text); }
+  a.contact-card:hover .contact-arrow{ opacity:1; transform:translateX(3px); }
+  .contact-card-static{ cursor:default; }
+
+  .contact-icon{
+    flex:0 0 auto; width:20px; height:20px; color:var(--dim);
+  }
+  .contact-card-text{
+    display:flex; flex-direction:column; gap:5px; flex:1; min-width:0;
+  }
+  .contact-card .label{
+    font-family:'JetBrains Mono',monospace; font-size:11px;
+    letter-spacing:.08em; text-transform:uppercase; color:var(--dim);
+  }
+  .contact-card .value{
+    font-size:16.5px; font-weight:500; color:var(--text);
+    word-break:break-word;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .contact-arrow{
+    font-family:'JetBrains Mono',monospace; color:var(--dim);
+    opacity:0; transition:opacity .2s, transform .2s;
+  }
 
   footer{
     padding:32px 0;
     display:flex; justify-content:space-between; align-items:center;
     font-size:12.5px; color:var(--dim);
     flex-wrap:wrap; gap:10px;
+  }
+
+  /* CONTACT — empilha em telas estreitas: texto em cima, cards embaixo */
+  @media (max-width:720px){
+    .contact-layout{ grid-template-columns:1fr; gap:28px; }
+    .contact-note{ max-width:none; }
+    .contact-card .value{ font-size:15px; }
+    .contact-card{ padding:20px; gap:14px; }
   }
 
   /* TABLET (portrait e landscape, ex.: iPad 768–1024px) */
@@ -315,6 +355,7 @@
     .grid{ grid-template-columns:repeat(2,1fr); gap:20px; }
 
     .contact-inner{ align-items:flex-start; }
+    .contact-layout{ grid-template-columns:1fr; gap:28px; }
   }
 
   /* COMPUTADOR — telas grandes, aproveita melhor o espaço horizontal */
@@ -360,7 +401,7 @@
       <div class="terminal-bar"><span class="dot-green"></span><span class="dot-yellow"></span><span class="dot-red"></span></div>
       <div class="terminal-body">
 <div class="line"><span class="prompt">$</span> whoami</div>
-<div class="line ok">rodrigo_ribeiro // dev &amp; pentester</div>
+<div class="line ok">rd_ // dev &amp; pentester</div>
 <div class="line"><span class="prompt">$</span> ls skills/</div>
 <div class="line ok">python  cybersec  ia  pentest  systems</div>
 <div class="line"><span class="prompt">$</span> ./build_solution.py --client empresa<span class="cursor"></span></div>
@@ -467,8 +508,8 @@
         </div>
         <div class="card-body">
           <h3>Laboratorio Prime</h3>
-          <p>Assistente de IA usando a API da Groq, com planos de busca de locais (ex. escolas) por cidade.</p>
-          <div class="tags"><span class="tag">python</span><span class="tag">ia</span></div>
+          <p>Laboratório virtual de química, física, eletrônica e outras materias com interface em abas para diferentes módulos de simulação.</p>
+          <div class="tags"><span class="tag">cientifico</span><span class="tag">teorico</span></div>
         </div>
       </div>
 
@@ -483,8 +524,8 @@
         </div>
         <div class="card-body">
           <h3>Jornal</h3>
-          <p>Sistema multiagente capaz de desenvolver software automaticamente, com papéis divididos entre arquiteto, programador, testador e revisor.</p>
-          <div class="tags"><span class="tag">multiagente</span><span class="tag">automação</span></div>
+          <p>Jornal digital que mostra os ultiimos acontecidos no mundo tecnologico, desde descobertas até invasões hackers feitas mundialmente e nacionalmente.</p>
+          <div class="tags"><span class="tag">noticias</span><span class="tag">automação</span></div>
         </div>
       </div>
 
@@ -499,8 +540,8 @@
         </div>
         <div class="card-body">
           <h3>OBD2 Scanner</h3>
-          <p>Ferramenta de segurança com GUI e CLI, monitor de processos com baseline adaptativo, firewall e detecção de mineração indevida.</p>
-          <div class="tags"><span class="tag">tkinter</span><span class="tag">segurança</span></div>
+          <p>Interpretador de dados do Scanner automotivo OBD2. Recebe os dados brutos do aparelho físico e adapta para visualização no notebook.</p>
+          <div class="tags"><span class="tag">scanner</span><span class="tag">automotivo</span></div>
         </div>
       </div>
 
@@ -515,8 +556,8 @@
         </div>
         <div class="card-body">
           <h3>Calculadora GA</h3>
-          <p>Sistema de mapas totalmente offline, com rotas por perfil (carro, bike, caminhada, aventura) e análise geográfica local.</p>
-          <div class="tags"><span class="tag">geopandas</span><span class="tag">offline</span></div>
+          <p>Calculadora que mostra a resolução do exercicio com planos 2D e 3D para visualização ampliada.</p>
+          <div class="tags"><span class="tag">calculadora</span><span class="tag">geometria analitica</span></div>
         </div>
       </div>
 
@@ -531,8 +572,8 @@
         </div>
         <div class="card-body">
           <h3>Ikarus</h3>
-          <p>Laboratório virtual de química, com interface em abas para diferentes módulos de simulação.</p>
-          <div class="tags"><span class="tag">tkinter</span><span class="tag">simulação</span></div>
+          <p>Ferramenta de segurança com GUI e CLI, monitor de processos com baseline adaptativo, firewall e detecção de mineração indevida.</p>
+          <div class="tags"><span class="tag">EDR</span><span class="tag">segurança</span></div>
         </div>
       </div>
 
@@ -547,8 +588,8 @@
         </div>
         <div class="card-body">
           <h3>Plaga</h3>
-          <p>Ferramentas de monitoramento — localizador de dispositivos via RSSI Bluetooth e monitor de rede com versões para notebook e Android.</p>
-          <div class="tags"><span class="tag">bluetooth</span><span class="tag">rede</span></div>
+          <p>Ferramentas de monitoramento — controle de dispositivos via SSH com monitor de comandos com versões para Linux e Windows.</p>
+          <div class="tags"><span class="tag">monitoramento</span><span class="tag">conexão</span></div>
         </div>
       </div>
 
@@ -557,22 +598,56 @@
 </section>
 
 <section class="section contact" id="contato">
-  <div class="wrap contact-inner">
-    <div>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">05</div>
       <h2>Vamos construir o seu sistema.</h2>
-      <p class="contact-note">Conte o problema que a sua empresa enfrenta hoje — eu cuido de transformar isso em um programa funcional, feito sob medida, com o código todo seu.</p>
     </div>
-    <div class="contact-info">
-      <div><span class="label">nome</span>Rodrigo Gomes Ferreira Ribeiro</div>
-      <div><span class="label">tel</span><a href="tel:+5534998763919">(34) 99876-3919</a></div>
-      <div><span class="label">mail</span><a href="mailto:rodrigogomesfribeiro@gmail.com">rodrigogomesfribeiro@gmail.com</a></div>
+    <div class="contact-layout">
+      <p class="contact-note">Conte o problema que a sua empresa enfrenta hoje — eu cuido de transformar isso em um programa funcional, feito sob medida, com o código todo seu.</p>
+
+      <div class="contact-cards">
+        <a class="contact-card" href="mailto:devrengine@gmail.com">
+          <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          <div class="contact-card-text">
+            <span class="label">e-mail</span>
+            <span class="value">devrengine@gmail.com</span>
+          </div>
+          <span class="contact-arrow">&rarr;</span>
+        </a>
+
+        <a class="contact-card" href="tel:+5534998763919">
+          <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+          <div class="contact-card-text">
+            <span class="label">telefone</span>
+            <span class="value">(34) 99876-3919</span>
+          </div>
+          <span class="contact-arrow">&rarr;</span>
+        </a>
+
+        <div class="contact-card contact-card-static">
+          <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <div class="contact-card-text">
+            <span class="label">responsável</span>
+            <span class="value">Rodrigo Gomes F. Ribeiro</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap contact-inner" style="width:100%;">
-    <span class="mono">R_Engine // Rodrigo Gomes Ferreira Ribeiro</span>
+    <span class="mono">R_Engine // Rodrigo</span>
   </div>
 </footer>
 
