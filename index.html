@@ -708,6 +708,39 @@
     .section-head, .service, .card, .client, .contact-card, .idea-body p{ animation:none !important; }
     .terminal-body .line{ width:auto !important; animation:none !important; }
   }
+
+  /* MENU HAMBÚRGUER */
+  .nav-inner{ position:relative; }
+  .nav-toggle{
+    display:flex; flex-direction:column; justify-content:center; gap:5px;
+    width:42px; height:42px; padding:0 9px; cursor:pointer;
+    background:transparent; border:1px solid var(--line); border-radius:8px;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .nav-toggle:hover, .nav-toggle:focus-visible{ border-color:#4ade80; box-shadow:0 0 10px rgba(74,222,128,.25); outline:none; }
+  .nav-toggle span{
+    display:block; height:2px; width:100%; background:var(--text); border-radius:2px;
+    transition:transform .25s ease, opacity .2s ease;
+  }
+  .nav-toggle.open span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  .nav-toggle.open span:nth-child(2){ opacity:0; }
+  .nav-toggle.open span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+  header.nav .nav-links{
+    position:absolute; top:100%; right:0; z-index:30;
+    flex-direction:column; gap:0; min-width:220px;
+    background:rgba(10,10,10,0.98); border:1px solid var(--line); border-radius:10px;
+    padding:6px; box-shadow:0 12px 30px rgba(0,0,0,.5);
+    opacity:0; visibility:hidden; transform:translateY(-6px);
+    transition:opacity .2s ease, transform .2s ease, visibility .2s;
+  }
+  header.nav .nav-links.open{ opacity:1; visibility:visible; transform:none; }
+  header.nav .nav-links a{ padding:12px 14px; border-radius:6px; font-size:14px; }
+  header.nav .nav-links a:hover{ background:rgba(74,222,128,.08); }
+  header.nav .nav-links a::after{ display:none; }
+  @media (prefers-reduced-motion: reduce){
+    .nav-toggle span, header.nav .nav-links{ transition:none; }
+  }
 </style>
 </head>
 <body>
@@ -715,7 +748,10 @@
 <header class="nav">
   <div class="wrap nav-inner">
     <div class="nav-name mono">R_Engine</div>
-    <nav class="nav-links">
+    <button class="nav-toggle" id="navToggle" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-links" id="navLinks">
       <a href="#servicos">O que eu construo</a>
       <a href="#clientes">Clientes</a>
       <a href="#ideia">A ideia</a>
@@ -1512,6 +1548,22 @@ document.querySelectorAll('.card-media').forEach(function(media){
   setTop(); setMood('base'); pos = home(); place(pos); setCurrent(currentSection());
   scheduleWander(); scheduleAsk(16000); scheduleQuip(rnd(9000, 14000));
   setTimeout(function(){ peek(pick(MSG.topo, 'topo')); }, 1200);
+})();
+</script>
+<script>
+(function(){
+  var btn=document.getElementById('navToggle'), menu=document.getElementById('navLinks');
+  if(!btn||!menu) return;
+  function set(open){
+    menu.classList.toggle('open',open);
+    btn.classList.toggle('open',open);
+    btn.setAttribute('aria-expanded',open?'true':'false');
+    btn.setAttribute('aria-label',open?'Fechar menu':'Abrir menu');
+  }
+  btn.addEventListener('click',function(e){ e.stopPropagation(); set(!menu.classList.contains('open')); });
+  menu.addEventListener('click',function(e){ if(e.target.tagName==='A') set(false); });
+  document.addEventListener('click',function(e){ if(!menu.contains(e.target)&&e.target!==btn) set(false); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') set(false); });
 })();
 </script>
 </body>
