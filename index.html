@@ -47,8 +47,7 @@
   header.nav{
     position:sticky; top:0; top: env(safe-area-inset-top, 0px);
     z-index:20;
-    background:rgba(11,13,16,0.86);
-    backdrop-filter: blur(10px);
+    background:rgba(10,10,10,0.94);
     border-bottom:1px solid var(--line);
   }
   .nav-inner{
@@ -174,6 +173,12 @@
   .idea-body p{ font-size:16.5px; color:#d7d9db; max-width:62ch; }
   .idea-body p + p{ margin-top:16px; }
 
+  /* A IDEIA — bloco centralizado na página */
+  #servicos .section-head, #clientes .section-head, #ideia .section-head, #trabalhos .section-head, #contato .section-head{ grid-template-columns:1fr; gap:10px; text-align:center; }
+  #servicos .section-head h2, #clientes .section-head h2, #ideia .section-head h2, #trabalhos .section-head h2, #contato .section-head h2{ margin-left:auto; margin-right:auto; }
+  #ideia .idea-body{ max-width:640px; margin:0 auto; }
+  #ideia .idea-body p{ max-width:none; }
+
   /* SERVICES */
   
   .services{
@@ -297,6 +302,20 @@
     font-family:'JetBrains Mono',monospace; color:var(--dim);
     opacity:0; transition:opacity .2s, transform .2s;
   }
+
+  /* CLIENTES */
+  .clients{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1px; background:var(--line); border:1px solid var(--line); }
+  .client{
+    display:flex; align-items:center; justify-content:space-between; gap:18px;
+    background:var(--panel); padding:26px 28px; text-decoration:none; color:inherit; transition:background .2s;
+  }
+  .client:hover{ background:var(--panel-2); }
+  .client:hover .contact-arrow{ opacity:1; transform:translate(2px,-2px); }
+  .client-text{ display:flex; flex-direction:column; gap:6px; min-width:0; }
+  .client .label{ font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); }
+  .client h3{ font-size:20px; font-weight:600; }
+  .client .value{ font-family:'JetBrains Mono',monospace; font-size:13.5px; color:var(--dim); word-break:break-all; }
+  .client:hover .value{ color:var(--text); }
 
   footer{
     padding:32px 0;
@@ -531,6 +550,164 @@
   }
   .ast-links button:hover, .ast-opts button:hover{ color:var(--text); border-color:#4ade80; }
   @media (prefers-reduced-motion: reduce){ .astriel[data-mood] .astriel-orb{ animation:none; } }
+
+  /* =====================================================
+     HACKER / TERMINAL — animações em CSS puro
+     ===================================================== */
+  ::selection{ background:#4ade80; color:#0a0a0a; }
+  @keyframes caret{ 0%,49%{ opacity:1; } 50%,100%{ opacity:0; } }
+
+  /* chuva de código ao fundo — só transform (leve, roda na GPU) */
+  body::before, body::after{
+    content:""; position:fixed; left:0; right:0; z-index:-1; pointer-events:none;
+    will-change:transform;
+  }
+  body::before{
+    top:-480px; height:calc(100% + 480px); opacity:.11;
+    background:
+      linear-gradient(to bottom,transparent,#4ade80 70%,transparent) 6% 0/1px 120px repeat-y,
+      linear-gradient(to bottom,transparent,#4ade80 70%,transparent) 28% 0/1px 240px repeat-y,
+      linear-gradient(to bottom,transparent,#4ade80 70%,transparent) 51% 0/1px 160px repeat-y,
+      linear-gradient(to bottom,transparent,#4ade80 70%,transparent) 74% 0/1px 160px repeat-y,
+      linear-gradient(to bottom,transparent,#4ade80 70%,transparent) 95% 0/1px 120px repeat-y;
+    animation:rainA 9s linear infinite;
+  }
+  body::after{
+    top:-600px; height:calc(100% + 600px); opacity:.11;
+    background:
+      linear-gradient(to bottom,transparent,#4ade80 70%,transparent) 17% 0/1px 150px repeat-y,
+      linear-gradient(to bottom,transparent,#4ade80 70%,transparent) 39% 0/1px 200px repeat-y,
+      linear-gradient(to bottom,transparent,#4ade80 70%,transparent) 63% 0/1px 120px repeat-y,
+      linear-gradient(to bottom,transparent,#4ade80 70%,transparent) 86% 0/1px 100px repeat-y;
+    animation:rainB 15s linear infinite;
+  }
+  @keyframes rainA{ to{ transform:translateY(480px); } }
+  @keyframes rainB{ to{ transform:translateY(600px); } }
+
+  /* scanlines CRT — estáticas */
+  html::after{
+    content:""; position:fixed; inset:0; z-index:25; pointer-events:none;
+    background:repeating-linear-gradient(to bottom,rgba(0,0,0,.10) 0 1px,transparent 1px 3px);
+  }
+
+  /* navegação */
+  .nav-name::after{ content:"_"; color:#4ade80; margin-left:2px; animation:caret 1s steps(1) infinite; }
+  .nav-links a{ position:relative; }
+  .nav-links a::after{
+    content:""; position:absolute; left:0; bottom:-6px; height:1px; width:100%;
+    background:#4ade80; box-shadow:0 0 8px #4ade80;
+    transform:scaleX(0); transform-origin:left; transition:transform .25s ease;
+  }
+  .nav-links a:hover::after{ transform:scaleX(1); }
+
+  /* hero: logo com brilho pulsante + glitch ocasional */
+  .logo{ filter:drop-shadow(0 0 10px rgba(74,222,128,.3)); animation:logoGlitch 8s steps(1,end) infinite; }
+  @keyframes logoGlitch{
+    0%,90%,100%{ transform:none; clip-path:none; }
+    91%{ transform:translateX(-4px); clip-path:inset(10% 0 55% 0); }
+    92%{ transform:translateX(5px); clip-path:inset(60% 0 8% 0); }
+    93%{ transform:translateX(-2px) skewX(8deg); clip-path:inset(30% 0 35% 0); }
+    94%{ transform:translateX(3px); clip-path:none; }
+    95%{ transform:none; clip-path:none; }
+  }
+
+  /* terminal: brilho, varredura e digitação linha a linha */
+  .terminal{ position:relative; border-color:rgba(74,222,128,.35); box-shadow:0 30px 60px -30px rgba(0,0,0,.6), 0 0 24px -8px rgba(74,222,128,.3); }
+  .terminal-body .prompt{ color:#4ade80; }
+  .terminal-body .line{
+    display:block; overflow:hidden; width:0;
+    animation:type var(--t) steps(var(--n),end) var(--d) forwards;
+  }
+  @keyframes type{ to{ width:calc(var(--n) * 1ch + 14px); } }
+  .terminal-body .line:nth-child(1){ --n:8;  --t:.6s;  --d:.5s; }
+  .terminal-body .line:nth-child(2){ --n:22; --t:1.1s; --d:1.3s; }
+  .terminal-body .line:nth-child(3){ --n:12; --t:.7s;  --d:2.6s; }
+  .terminal-body .line:nth-child(4){ --n:38; --t:1.2s; --d:3.5s; }
+  .terminal-body .line:nth-child(5){ --n:38; --t:1.8s; --d:4.9s; }
+
+  /* títulos: cursor piscando + glitch rápido de tempos em tempos */
+  .section-head .num::before{ content:"// "; color:#4ade80; }
+  .section-head h2::after{ content:"_"; color:#4ade80; margin-left:4px; animation:caret 1s steps(1) infinite; }
+  .section-head h2, .contact h2{ animation:glitch 7s steps(1,end) infinite; }
+  #clientes .section-head h2{ animation-delay:-1.5s; }
+  #ideia .section-head h2{ animation-delay:-3s; }
+  #trabalhos .section-head h2{ animation-delay:-4.5s; }
+  #contato .section-head h2{ animation-delay:-6s; }
+  @keyframes glitch{
+    0%,92%,100%{ text-shadow:none; transform:none; }
+    93%{ text-shadow:2px 0 #ff2e63,-2px 0 #22d3ee; transform:translateX(-2px); }
+    95%{ text-shadow:-3px 0 #ff2e63,3px 0 #22d3ee; transform:translateX(2px) skewX(-6deg); }
+    97%{ text-shadow:1px 0 #ff2e63,-1px 0 #22d3ee; transform:translateX(-1px); }
+  }
+
+  /* linha luminosa percorrendo a borda de cada seção */
+  .section{ position:relative; overflow-x:clip; }
+  .section::after{
+    content:""; position:absolute; bottom:-1px; left:0; width:30%; height:1px; pointer-events:none; transform:translateX(-100%);
+    background:linear-gradient(90deg,transparent,#4ade80,transparent);
+    animation:run 7s linear infinite;
+  }
+  @keyframes run{ to{ transform:translateX(340%); } }
+
+  /* serviços */
+  .service{ position:relative; overflow:hidden; transition:background .3s; }
+  .service::before{
+    content:""; position:absolute; left:0; top:0; width:100%; height:2px; pointer-events:none;
+    background:linear-gradient(90deg,transparent,#4ade80,transparent); transform:translateX(-100%);
+  }
+  .service:hover{ background:var(--panel); }
+  .service:hover::before{ animation:slide 1s ease-out; }
+  @keyframes slide{ to{ transform:translateX(100%); } }
+  .service h3{ transition:color .25s; }
+  .service h3::before{ content:"> "; color:#4ade80; opacity:0; margin-left:-1ch; transition:opacity .25s, margin .25s; }
+  .service:hover h3{ color:#4ade80; }
+  .service:hover h3::before{ opacity:1; margin-left:0; }
+
+  /* cards de trabalhos */
+  .card{ transition:border-color .3s, box-shadow .3s, translate .3s; }
+  .card:hover{
+    border-color:rgba(74,222,128,.6);
+    box-shadow:0 0 0 1px rgba(74,222,128,.25), 0 24px 50px -24px rgba(74,222,128,.4);
+    translate:0 -4px;
+  }
+  .card-media::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(transparent 44%,rgba(74,222,128,.22) 50%,transparent 56%);
+    transform:translateY(-100%);
+  }
+  .card:hover .card-media::after{ animation:cardscan 1.2s ease-in-out infinite; }
+  @keyframes cardscan{ to{ transform:translateY(100%); } }
+  .tag{ transition:color .2s, border-color .2s; }
+  .card:hover .tag{ color:#4ade80; border-color:rgba(74,222,128,.45); }
+
+  /* clientes e contato */
+  .client, .contact-card{ transition:background .2s, box-shadow .25s; }
+  .client:hover, a.contact-card:hover{ box-shadow:inset 3px 0 0 #4ade80, 0 0 24px -10px rgba(74,222,128,.5); }
+  .client:hover h3{ color:#4ade80; }
+  .contact-icon{ transition:color .2s, filter .2s; }
+  a.contact-card:hover .contact-icon{ color:#4ade80; filter:drop-shadow(0 0 6px rgba(74,222,128,.7)); }
+
+  footer span::after{ content:" \25AE"; color:#4ade80; animation:caret 1s steps(1) infinite; }
+
+  /* entrada suave ao rolar (CSS puro, navegadores com scroll-driven animations) */
+  @supports (animation-timeline: view()){
+    .section-head, .service, .card, .client, .contact-card, .idea-body p{
+      animation:reveal linear both;
+      animation-timeline:view();
+      animation-range:entry 0% entry 45%;
+    }
+    @keyframes reveal{
+      from{ opacity:0; transform:translateY(24px); }
+      to{ opacity:1; transform:none; }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    body::before, body::after, .logo, .section::after,
+    .section-head h2, .contact h2, .nav-name::after, .section-head h2::after, footer span::after,
+    .section-head, .service, .card, .client, .contact-card, .idea-body p{ animation:none !important; }
+    .terminal-body .line{ width:auto !important; animation:none !important; }
+  }
 </style>
 </head>
 <body>
@@ -539,8 +716,9 @@
   <div class="wrap nav-inner">
     <div class="nav-name mono">R_Engine</div>
     <nav class="nav-links">
+      <a href="#servicos">O que eu construo</a>
+      <a href="#clientes">Clientes</a>
       <a href="#ideia">A ideia</a>
-      <a href="#servicos">Serviços</a>
       <a href="#trabalhos">Trabalhos</a>
       <a href="#contato">Contato</a>
     </nav>
@@ -566,25 +744,10 @@
   </div>
 </section>
 
-<section class="section" id="ideia">
-  <div class="wrap">
-    <div class="section-head">
-      <div class="num">01</div>
-      <h2>A ideia por trás do trabalho</h2>
-    </div>
-    <div class="idea-body">
-      <p>Empresas pequenas, médias e grandes costumam ter o mesmo problema: processos que ainda dependem de planilhas soltas, rotinas manuais ou softwares genéricos que não encaixam de verdade na operação. O meu trabalho é construir o programa certo para o problema certo — pensado a partir da rotina real de quem vai usar.</p>
-      <p>Uso Python como base, com interfaces em Tkinter ou PyQt6, para entregar aplicações desktop rápidas de usar e fáceis de manter. Os programas rodam tanto em Linux quanto em Windows, então a empresa não fica presa a um único ambiente.</p>
-      <p>E um ponto que trato como regra: todo software desenvolvido tem autoria da pessoa ou empresa que contratou. O código é seu.</p>
-      <p>Nem toda empresa precisa de um sistema novo. Muitas já têm a própria estrutura funcionando e o que falta é saber se ela resiste a um ataque de verdade. Nesses casos, entro para testar a segurança do que já existe — simulando invasões reais para encontrar brechas antes que um hacker as encontre, e mostrar com clareza onde a empresa está vulnerável e o que precisa ser corrigido.</p>
-    </div>
-  </div>
-</section>
-
 <section class="section" id="servicos">
   <div class="wrap">
     <div class="section-head">
-      <div class="num">02</div>
+      <div class="num">01</div>
       <h2>O que eu construo</h2>
     </div>
     <div class="services">
@@ -607,11 +770,42 @@
     </div>
   </div>
 </section>
-
-<section class="section" id="trabalhos">
+<section class="section" id="clientes">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">02</div>
+      <h2>Clientes</h2>
+    </div>
+    <div class="clients">
+      <a class="client" href="https://magotechstore.onrender.com" target="_blank" rel="noopener">
+        <div class="client-text">
+          <span class="label">cliente 01</span>
+          <h3>Diego</h3>
+          <span class="value">magotechstore.onrender.com</span>
+        </div>
+        <span class="contact-arrow">&nearr;</span>
+      </a>
+    </div>
+  </div>
+</section>
+<section class="section" id="ideia">
   <div class="wrap">
     <div class="section-head">
       <div class="num">03</div>
+      <h2>A ideia por trás do trabalho</h2>
+    </div>
+    <div class="idea-body">
+      <p>Empresas pequenas, médias e grandes costumam ter o mesmo problema: processos que ainda dependem de planilhas soltas, rotinas manuais ou softwares genéricos que não encaixam de verdade na operação. O meu trabalho é construir o programa certo para o problema certo — pensado a partir da rotina real de quem vai usar.</p>
+      <p>Uso Python como base, com interfaces em Tkinter ou PyQt6, para entregar aplicações desktop rápidas de usar e fáceis de manter. Os programas rodam tanto em Linux quanto em Windows, então a empresa não fica presa a um único ambiente.</p>
+      <p>E um ponto que trato como regra: todo software desenvolvido tem autoria da pessoa ou empresa que contratou. O código é seu.</p>
+      <p>Nem toda empresa precisa de um sistema novo. Muitas já têm a própria estrutura funcionando e o que falta é saber se ela resiste a um ataque de verdade. Nesses casos, entro para testar a segurança do que já existe — simulando invasões reais para encontrar brechas antes que um hacker as encontre, e mostrar com clareza onde a empresa está vulnerável e o que precisa ser corrigido.</p>
+    </div>
+  </div>
+</section>
+<section class="section" id="trabalhos">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="num">04</div>
       <h2>Alguns trabalhos</h2>
     </div>
     <div class="grid">
@@ -626,9 +820,9 @@
           <span class="replace">foto/vídeo aqui</span>
         </div>
         <div class="card-body">
-          <h3>Laboratorio Prime</h3>
-          <p>Laboratório virtual de química, física, eletrônica e outras materias com interface em abas para diferentes módulos de simulação.</p>
-          <div class="tags"><span class="tag">cientifico</span><span class="tag">teorico</span></div>
+          <h3>Laboratório Prime</h3>
+          <p>Laboratório virtual de química, física, eletrônica e outras matérias, com interface em abas para diferentes módulos de simulação.</p>
+          <div class="tags"><span class="tag">científico</span><span class="tag">teórico</span></div>
         </div>
       </div>
 
@@ -643,8 +837,8 @@
         </div>
         <div class="card-body">
           <h3>Jornal</h3>
-          <p>Jornal digital que mostra os ultiimos acontecidos no mundo tecnologico, desde descobertas até invasões hackers feitas mundialmente e nacionalmente.</p>
-          <div class="tags"><span class="tag">noticias</span><span class="tag">automação</span></div>
+          <p>Jornal digital que mostra os últimos acontecimentos do mundo tecnológico, desde descobertas até invasões hackers feitas mundialmente e nacionalmente.</p>
+          <div class="tags"><span class="tag">notícias</span><span class="tag">automação</span></div>
         </div>
       </div>
 
@@ -659,7 +853,7 @@
         </div>
         <div class="card-body">
           <h3>OBD2 Scanner</h3>
-          <p>Interpretador de dados do Scanner automotivo OBD2. Recebe os dados brutos do aparelho físico e adapta para visualização no notebook.</p>
+          <p>Interpretador de dados do scanner automotivo OBD2. Recebe os dados brutos do aparelho físico e adapta para visualização no notebook.</p>
           <div class="tags"><span class="tag">scanner</span><span class="tag">automotivo</span></div>
         </div>
       </div>
@@ -675,8 +869,8 @@
         </div>
         <div class="card-body">
           <h3>Calculadora GA</h3>
-          <p>Calculadora que mostra a resolução do exercicio com planos 2D e 3D para visualização ampliada.</p>
-          <div class="tags"><span class="tag">calculadora</span><span class="tag">geometria analitica</span></div>
+          <p>Calculadora que mostra a resolução do exercício com planos 2D e 3D para visualização ampliada.</p>
+          <div class="tags"><span class="tag">calculadora</span><span class="tag">geometria analítica</span></div>
         </div>
       </div>
 
@@ -707,7 +901,7 @@
         </div>
         <div class="card-body">
           <h3>Plaga</h3>
-          <p>Ferramentas de monitoramento — controle de dispositivos via SSH com monitor de comandos com versões para Linux e Windows.</p>
+          <p>Ferramentas de monitoramento — controle de dispositivos via SSH, com monitor de comandos e versões para Linux e Windows.</p>
           <div class="tags"><span class="tag">monitoramento</span><span class="tag">conexão</span></div>
         </div>
       </div>
@@ -715,11 +909,10 @@
     </div>
   </div>
 </section>
-
 <section class="section contact" id="contato">
   <div class="wrap">
     <div class="section-head">
-      <div class="num">04</div>
+      <div class="num">05</div>
       <h2>Vamos construir o seu sistema.</h2>
     </div>
     <div class="contact-layout">
@@ -738,16 +931,6 @@
           <span class="contact-arrow">&rarr;</span>
         </a>
 
-        <a class="contact-card" href="tel:+5534998763919">
-          <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
-          </svg>
-          <div class="contact-card-text">
-            <span class="label">telefone</span>
-            <span class="value">(34) 99876-3919</span>
-          </div>
-          <span class="contact-arrow">&rarr;</span>
-        </a>
 
         <div class="contact-card contact-card-static">
           <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
@@ -778,12 +961,13 @@
     <div class="ast-opts" id="astrielOpts"></div>
     <nav class="ast-links" aria-label="Navegação do assistente">
       <a href="#topo" data-sec="topo">Início</a>
-      <a href="#ideia" data-sec="ideia">A ideia</a>
       <a href="#servicos" data-sec="servicos">Serviços</a>
+      <a href="#clientes" data-sec="clientes">Clientes</a>
+      <a href="#ideia" data-sec="ideia">A ideia</a>
       <a href="#trabalhos" data-sec="trabalhos">Trabalhos</a>
       <a href="#contato" data-sec="contato">Contato</a>
       <button type="button" id="astrielChat">Bater papo</button>
-      <button type="button" id="astrielGames" style="grid-column:1/-1">Jogos</button>
+      <button type="button" id="astrielGames">Jogos</button>
     </nav>
   </div>
   <button class="astriel-orb" id="astrielOrb" type="button" aria-label="Abrir o assistente Astriel" aria-expanded="false">
@@ -921,6 +1105,12 @@ document.querySelectorAll('.card-media').forEach(function(media){
       'Esta é a filosofia do Rd. Eu só leio em voz alta e não ganho nada por isso.',
       'Leia com calma. Eu espero. Não tenho mais nada pra fazer mesmo.'
     ],
+    clientes: [
+      'Estes são alguns dos clientes do Rodrigo. Clique no card para visitar o site deles.',
+      'Clientes! Gente que confiou no Rd. Eu confio mais ou menos, mas ele faz direito.',
+      'Aqui ficam os sites e sistemas de quem já trabalhou com o Rd. A lista só cresce.',
+      'Cada card é um cliente de verdade. Eu só fico de recepcionista, como sempre.'
+    ],
     servicos: [
       'Estes são os tipos de solução que ele constrói para empresas.',
       'Serviços! Se der problema em alguma coisa dessas, o Rd resolve. Se der problema em mim, também.',
@@ -934,7 +1124,7 @@ document.querySelectorAll('.card-media').forEach(function(media){
       'Clique nas setas dos cards. Eu seria útil, mas fui colocado só pra enfeitar.'
     ],
     contato: [
-      'Pronto para conversar? Escolha e-mail ou telefone e conte seu problema.',
+      'Pronto para conversar? Mande um e-mail e conte seu problema.',
       'Fim da página! Agora é com você: chama o Rd e conta o seu perrengue.',
       'Contato! Mande mensagem pro Rd. Se ele não responder, eu aviso que você passou aqui.',
       'Chegou ao final. Se gostou, fale com ele. Se não gostou, fale comigo (spoiler: eu repasso).'
@@ -960,10 +1150,10 @@ document.querySelectorAll('.card-media').forEach(function(media){
       'IPv4: ' + ip4 + '\n' +
       'IPv6: ' + ip6 + '\n' +
       'Coord.: ' + lat + ', ' + lon + '\n' +
-      'Local: ' + oneOf(['no meio do oceano', 'dentro de uma geladeira', 'sede secreta dos pombos', 'atrás do seu sofá', 'cidade fantasma de Narnia', 'em cima de um pinguim']) + '\n' +
+      'Local: ' + oneOf(['no meio do oceano', 'dentro de uma geladeira', 'sede secreta dos pombos', 'atrás do seu sofá', 'cidade fantasma de Nárnia', 'em cima de um pinguim']) + '\n' +
       'MAC: ' + mac + '\n' +
       'Aparelho: ' + oneOf(['torradeira smart', 'micro-ondas gamer', 'tablet da vovó', 'PC do Windows 95', 'geladeira conectada']) + '\n' +
-      'Provedor: ' + oneOf(['Net do Vizinho', 'Wi-Fi do Cafe do Zé', 'Satélite do Tio', 'Fibra da Prefeitura de Mordor']) + '\n' +
+      'Provedor: ' + oneOf(['Net do Vizinho', 'Wi-Fi do Café do Zé', 'Satélite do Tio', 'Fibra da Prefeitura de Mordor']) + '\n' +
       'Senha do Wi-Fi: ' + oneOf(['12345678', 'senha123', 'admin', 'password']) + '\n' +
       '(tudo inventado, relaxa. Ou não.)';
   }
@@ -974,7 +1164,7 @@ document.querySelectorAll('.card-media').forEach(function(media){
       'Chute: ' + oneOf(['você está sentado(a)', 'você está de pijama', 'você está com fome', 'você está olhando pra mim', 'tem café perto']) + '\n' +
       'Precisão: ' + ri(2, 7) + '% (mentira, é chute)';
   }
-  var DEST = { topo:'o início', ideia:'a ideia', servicos:'os serviços', trabalhos:'os trabalhos', contato:'o contato' };
+  var DEST = { topo:'o início', servicos:'os serviços', clientes:'os clientes', ideia:'a ideia', trabalhos:'os trabalhos', contato:'o contato' };
 
   /* perguntas: cada resposta muda o humor dele (feliz / bravo / triste / base) */
   var Q = [
@@ -1212,7 +1402,7 @@ document.querySelectorAll('.card-media').forEach(function(media){
     var doc = document.documentElement;
     if(window.scrollY + window.innerHeight >= doc.scrollHeight - 2) return 'contato';
     var line = window.innerHeight * 0.4, found = 'topo';
-    ['topo','ideia','servicos','trabalhos','contato'].forEach(function(s){
+    ['topo','servicos','clientes','ideia','trabalhos','contato'].forEach(function(s){
       var el = document.getElementById(s);
       if(el && el.getBoundingClientRect().top <= line) found = s;
     });
