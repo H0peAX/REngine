@@ -1162,7 +1162,9 @@ document.querySelectorAll('.card-media').forEach(function(media){
       'Estes são alguns dos clientes do Rodrigo. Clique no card para visitar o site deles.',
       'Clientes! Gente que confiou no Rd. Eu confio mais ou menos, mas ele faz direito.',
       'Aqui ficam os sites e sistemas de quem já trabalhou com o Rd. A lista só cresce.',
-      'Cada card é um cliente de verdade. Eu só fico de recepcionista, como sempre.'
+      'Cada card é um cliente de verdade. Eu só fico de recepcionista, como sempre.',
+      'MagoTechStore, Feliphesport, josirelax, mariamakeup... que turma boa! Toca em "Clientes" no meu menu que eu apresento um por um.',
+      'Tem celular consertado, portfólio de campeão, massagem e maquiagem aqui. Só falta um cafezinho pra turma toda.'
     ],
     servicos: [
       'Estes são os tipos de solução que ele constrói para empresas.',
@@ -1287,7 +1289,11 @@ document.querySelectorAll('.card-media').forEach(function(media){
     {t:'Fiz hora extra hoje. Pago em curtidas, claro.', m:'triste'},
     {t:'Estou monitorando você. Brincadeira... ou não. Tô de brincadeira.', m:'base'},
     {t:'O Rd disse "só um tempinho". Isso foi antes do commit inicial.', m:'triste'},
-    {t:'Eu sou a única IA que paga o próprio aluguel em pixels.', m:'feliz'}
+    {t:'Eu sou a única IA que paga o próprio aluguel em pixels.', m:'feliz'},
+    {t:'Saudade da turma dos clientes. Bora visitar a MagoTechStore?', m:'feliz'},
+    {t:'A josirelax me deu vontade de tirar uma soneca. Eu não durmo: eu hiberno.', m:'base'},
+    {t:'A mariamakeup deixou tudo tão bonito... queria um filtro pra mim.', m:'feliz'},
+    {t:'Ouvi dizer que o Feliphesport é portfólio de campeão. Medalha pro Rd!', m:'feliz'}
   ];
   var order = [], firstCycle = true;
   function nextQ(){
@@ -1304,7 +1310,7 @@ document.querySelectorAll('.card-media').forEach(function(media){
   var pos = {x:0, y:0}, vx = 0;
   var flight = null, queue = [], pauseUntil = 0, running = false;
   var isOpen = false, asking = false, openY = 0, forced = null, announced = 'topo';
-  var wanderT, idleT, hideT, typeT, askT, moodT, mood = null;
+  var wanderT, idleT, hideT, typeT, askT, moodT, reactT, mood = null;
   var dragging = false, pressed = null, grab = null, dragT = null, dr = null;
   var hist = [], trails = [];
   for(var i = 0; i < 3; i++){
@@ -1407,7 +1413,7 @@ document.querySelectorAll('.card-media').forEach(function(media){
   }
   function closeBubble(){
     var was = asking;
-    isOpen = false; asking = false; clearTimeout(hideT);
+    isOpen = false; asking = false; clearTimeout(hideT); clearTimeout(reactT);
     bubble.classList.remove('show', 'asking'); bubble.classList.add('peek');
     orb.setAttribute('aria-expanded', 'false');
     if(was) scheduleAsk(rnd(40000, 60000));
@@ -1425,13 +1431,16 @@ document.querySelectorAll('.card-media').forEach(function(media){
     orb.setAttribute('aria-expanded', 'true'); say(q.t);
   }
   function answer(o){
+    if(o.client){ clientPick(o.client); return; }
     asking = false; optsEl.innerHTML = '';
     bubble.classList.remove('asking'); bubble.classList.add('peek');
     var txt = typeof o.r === 'function' ? o.r() : o.r;
     setMood(o.m, o.data ? 9000 : 5000); say(txt, o.data);
     clearTimeout(hideT); hideT = setTimeout(closeBubble, o.data ? 11000 : 5200);
-    if(o.go) setTimeout(function(){ goTo(o.go); }, 1500);
-    if(o.url) setTimeout(function(){ location.href = o.url; }, 1600);
+    if(o.go) setTimeout(function(){ goTo(o.go); if(o.card != null) showCard(o.card); }, 1500);
+    if(o.blank && o.url) window.open(o.url, '_blank', 'noopener');
+    else if(o.url) setTimeout(function(){ location.href = o.url; }, 1600);
+    if(o.menu) setTimeout(function(){ openAsk(o.menu()); }, 1100);
     scheduleAsk(rnd(28000, 40000));
   }
   function askNow(){
@@ -1482,7 +1491,12 @@ document.querySelectorAll('.card-media').forEach(function(media){
     clearTimeout(idleT); idleT = setTimeout(arrive, 450);
   }
   links.forEach(function(a){
-    a.addEventListener('click', function(e){ e.preventDefault(); goTo(a.getAttribute('data-sec')); });
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      var sec = a.getAttribute('data-sec');
+      if(sec === 'clientes'){ closeBubble(); openAsk(clientsMenu()); }
+      else goTo(sec);
+    });
   });
   chatBtn.addEventListener('click', function(){ closeBubble(); openAsk(nextQ()); });
   /* Jogos: menu do Astriel com os minigames */
@@ -1491,6 +1505,84 @@ document.querySelectorAll('.card-media').forEach(function(media){
     {l:'Sinuca', m:'feliz', r:'Boa! Vou pegar o taco. Prepare-se pra perder!', url:'sinuca.html'},
     {l:'Deixa pra lá', m:'triste', r:'Tá bom... eu guardo o taco. Por enquanto.'} ]};
   gamesBtn.addEventListener('click', function(){ closeBubble(); openAsk(GAMES); });
+
+  /* Clientes: menu com a marca de cada um; o Astriel comenta, reage e enturma */
+  var CL_ORDER = ['mago', 'feliphe', 'josi', 'maria'];
+  var CL = {
+    mago:{ name:'MagoTechStore', idx:0, url:'https://magotechstore.onrender.com',
+      next:['Quer dar uma olhada na MagoTechStore?', 'Bora visitar a MagoTechStore? Leva o celular quebrado, vai que cola.'],
+      reacts:[
+        [ {m:'feliz', t:'MagoTechStore! O Diego conserta celular que eu nem sabia que dava pra consertar.'},
+          {m:'tonto', t:'Se eu travar de vez, eu vou direto pra lá. Faz um reset em mim, Diego!'} ],
+        [ {m:'feliz', t:'Site profissional, serviços bem organizados... o Diego não deixa cliente na mão.'},
+          {m:'base',  t:'Dizem que lá até celular que não liga volta a funcionar. Mágica? Não: Mago.'} ],
+        [ {m:'feliz', t:'Ah, a Mago Tech! O nome já é um feitiço. Abracadabra e a tela volta nova.'},
+          {m:'bravo', t:'Só não me pede pra trocar bateria! Meu contrato não prevê isso.'} ]
+      ] },
+    feliphe:{ name:'Feliphesport', idx:1, url:'https://feliphesport.onrender.com',
+      next:['Quer ver o portfólio do Feliphe?', 'Bora conferir o Feliphesport? Aquecimento primeiro, hein.'],
+      reacts:[
+        [ {m:'feliz', t:'Feliphesport! O Feliphe ficou de queixo caído com o próprio portfólio. Eu também ficaria.'},
+          {m:'feliz', t:'Ele disse que nunca tinha imaginado algo tão estético. Aceito os créditos: eu estava na recepção.'} ],
+        [ {m:'tonto', t:'Feliphesport... fiquei tonto de tanto estilo.'},
+          {m:'feliz', t:'Se esporte fosse site, seria esse: fôlego, estilo e zero cãibra.'} ],
+        [ {m:'feliz', t:'O Feliphe tem portfólio de campeão! Medalha de ouro em estética.'},
+          {m:'base',  t:'Pena que eu não tenho perna pra correr. Só bits.'} ]
+      ] },
+    josi:{ name:'josirelax', idx:2, url:'https://josirelax.onrender.com',
+      next:['Quer conhecer o site da Josi?', 'Bora dar uma relaxada na josirelax?'],
+      reacts:[
+        [ {m:'base',  t:'josirelax... só de falar o nome já baixou meu uso de CPU.'},
+          {m:'feliz', t:'A Josiane tem o site mais zen da internet. Fico calmo só de passar por lá.'} ],
+        [ {m:'triste', t:'Aaah, massagem... eu queria uma. Meu ombro é de pixels e tá todo travado.'},
+          {m:'feliz',  t:'A Josi cuida das pessoas, o Rd cuida do site e eu cuido de fazer hora. Equipe boa!'} ],
+        [ {m:'feliz', t:'josirelax! Relaxamento nível máximo. Até meu ventilador interno desacelerou.'},
+          {m:'tonto', t:'Prometo visitar... depois de deitar um pouquinho. Zzz.'} ]
+      ] },
+    maria:{ name:'mariamakeup', idx:3, url:'https://mariamakeup.onrender.com',
+      next:['Quer ver o trabalho da Maria Júlia?', 'Bora passar na mariamakeup? Eu tô precisando de um look.'],
+      reacts:[
+        [ {m:'feliz', t:'mariamakeup! A Maria Júlia deixa tudo com brilho. Eu só tenho brilho de monitor.'},
+          {m:'tonto', t:'Pergunta se ela faz base pra bolinha verde! Eu mereço um look novo.'} ],
+        [ {m:'feliz', t:'Maquiagem de verdade! Aqui não tem filtro: é talento.'},
+          {m:'base',  t:'O site ficou tão bonito que até o meu cache ficou com vergonha.'} ],
+        [ {m:'feliz', t:'A Maria Júlia sabe das coisas: realça o que importa e esconde o bug. Quer dizer, a olheira.'},
+          {m:'tonto', t:'Será que ela me faz um delineado? Já tenho olhos, falta só o capricho.'} ]
+      ] }
+  };
+  function clientsMenu(){
+    var o = CL_ORDER.map(function(id){ return {l:CL[id].name, client:id}; });
+    o.push({l:'Ver todos os cards', m:'feliz', r:'Vem comigo! Eu apresento a galera.', go:'clientes'});
+    o.push({l:'Deixa pra lá', m:'triste', r:'Tá bom... a turma fica esperando você aqui. Eu fico fazendo companhia.'});
+    return { t:pick(['Qual cliente você quer conhecer? Todo mundo aqui é da família!',
+                     'Escolhe um! Eu conheço a turma toda, é gente boa.',
+                     'Cada um com seu estilo: celular, esporte, massagem e maquiagem. Quem vai ser?'], 'clm'), o:o };
+  }
+  function clientNext(c){
+    return { t:pick(c.next, 'nx-' + c.name), o:[
+      {l:'Visitar o site', m:'feliz', r:pick(['Abrindo! Diz que fui eu que mandei.', 'Vai lá! Eu seguro a recepção.'], 'vis'), url:c.url, blank:true},
+      {l:'Ver o card', m:'feliz', r:'Te levo lá!', go:'clientes', card:c.idx},
+      {l:'Outro cliente', m:'base', r:'Bora conhecer o resto da turma!', menu:clientsMenu},
+      {l:'Fechar', m:'base', r:'Beleza! Qualquer coisa é só me chamar.'} ]};
+  }
+  function clientPick(id){
+    var c = CL[id], seq = pick(c.reacts, 'rc-' + id), i = 0;
+    asking = false; optsEl.innerHTML = '';
+    bubble.classList.remove('asking'); bubble.classList.add('peek');
+    clearTimeout(askT); clearTimeout(hideT); clearTimeout(reactT);
+    scheduleAsk(rnd(45000, 60000));
+    (function step(){
+      var s = seq[i++], wait = 1600 + s.t.length * 32;
+      setMood(s.m, wait + 1500); say(s.t);
+      reactT = setTimeout(i < seq.length ? step : function(){ openAsk(clientNext(c)); }, wait);
+    })();
+  }
+  function showCard(i){
+    var tr = document.getElementById('clientsTrack'); if(!tr) return;
+    var c = tr.querySelectorAll('.client')[i]; if(!c) return;
+    var pad = parseFloat(getComputedStyle(tr).paddingLeft) || 0;
+    tr.scrollTo({left: tr.scrollLeft + c.getBoundingClientRect().left - tr.getBoundingClientRect().left - pad, behavior: reduce ? 'auto' : 'smooth'});
+  }
 
   /* ---- puxar o Astriel: bravo (puxão), tonto (sacudir) ou os dois (sacudir por muito tempo) ---- */
   function startDrag(){
