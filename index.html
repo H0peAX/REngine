@@ -720,6 +720,43 @@
   @media (prefers-reduced-motion: reduce){
     .nav-toggle span, header.nav .nav-links{ transition:none; }
   }
+
+  .site-overlay{position:fixed;inset:0;z-index:10000;background:var(--bg);display:none;}
+  .site-overlay.show{display:block;}
+  .site-overlay-close{position:fixed;top:14px;right:16px;z-index:10001;width:40px;height:40px;border-radius:999px;border:1px solid var(--line-strong);background:var(--panel);color:var(--text);font:600 16px/1 Inter,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .site-overlay-close:hover{border-color:var(--text);}
+  .site-overlay-frame{width:100%;height:100%;border:0;display:block;background:var(--bg);}
+
+  /* ===== Astriel — poderes de adm: rasgos no site + fundo Matrix ===== */
+  .rift{ position:fixed; inset:0; z-index:9000; display:none; pointer-events:none; background:transparent; transition:background .4s; }
+  .rift.on{ display:block; pointer-events:auto; touch-action:none; cursor:pointer; }
+  .rift canvas{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .rift-scan{ position:absolute; inset:0; opacity:0; transition:opacity .6s; pointer-events:none;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px),
+               radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.65) 100%); }
+  .rift.covered .rift-scan{ opacity:1; }
+  .rift.closing .rift-scan{ opacity:0; }
+  .rift-term{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:min(620px,90vw); min-height:15em; margin:0;
+    padding:18px; box-sizing:border-box; font:13px/1.7 'JetBrains Mono',monospace; color:#4ade80; text-shadow:0 0 8px rgba(74,222,128,.7);
+    white-space:pre-wrap; word-break:break-word; background:rgba(0,0,0,.6); border:1px solid rgba(74,222,128,.35); border-radius:8px;
+    opacity:0; transition:opacity .4s; pointer-events:none; }
+  .rift-term::after{ content:'\25AE'; animation:rift-blink .8s steps(1) infinite; }
+  .rift.covered .rift-term{ opacity:1; }
+  .rift.closing .rift-term{ opacity:0; }
+  .rift-hint{ position:absolute; left:0; right:0; bottom:calc(14px + env(safe-area-inset-bottom,0px)); text-align:center;
+    font:11px 'JetBrains Mono',monospace; color:rgba(74,222,128,.55); opacity:0; transition:opacity .5s; pointer-events:none; }
+  .rift.covered:not(.closing) .rift-hint{ opacity:1; }
+  .rift-flash{ position:absolute; inset:0; background:#d9ffe6; opacity:0; pointer-events:none; }
+  .rift-flash.go{ animation:rift-flash .45s ease-out; }
+  .rift.lite{ background:#000; }
+  .rift.lite.closing{ background:transparent; }
+  .rift.lite canvas{ display:none; }
+  .astriel.fx-on{ z-index:9001; }
+  @keyframes rift-flash{ 0%{ opacity:.55; } 100%{ opacity:0; } }
+  @keyframes rift-blink{ 50%{ opacity:0; } }
+  @keyframes rift-shake{ 0%{ transform:translate(0,0); } 20%{ transform:translate(-4px,2px); } 40%{ transform:translate(3px,-3px); }
+    60%{ transform:translate(-2px,-2px); } 80%{ transform:translate(4px,3px); } 100%{ transform:translate(0,0); } }
+  html.rift-shake body > section, html.rift-shake body > footer{ animation:rift-shake .16s linear infinite; }
 </style>
 </head>
 <body>
@@ -1005,10 +1042,18 @@
 <footer>
   <div class="wrap contact-inner" style="width:100%;">
     <span class="mono">R_Engine // Rodrigo</span>
-    <a class="mono" href="/privacidade" style="margin-left:auto;font-size:12px;color:var(--dim);text-decoration:none;">Privacidade (LGPD)</a>
+    <a class="mono" href="/privacidade.html" onclick="abrirOverlay('/privacidade.html'); return false;" style="margin-left:auto;font-size:12px;color:var(--dim);text-decoration:none;cursor:pointer;">Privacidade (LGPD)</a>
   </div>
 </footer>
 
+
+<div class="rift" id="rift" aria-hidden="true">
+  <canvas id="riftCanvas"></canvas>
+  <div class="rift-scan"></div>
+  <pre class="rift-term" id="riftTerm"></pre>
+  <div class="rift-hint">toque para fechar</div>
+  <div class="rift-flash" id="riftFlash"></div>
+</div>
 
 <div class="astriel align-right" id="astriel">
   <div class="astriel-bubble peek" id="astrielBubble" role="dialog" aria-label="Astriel, assistente de navegação">
@@ -1278,7 +1323,10 @@ document.querySelectorAll('.card-media').forEach(function(media){
       {l:'Backup o quê?', m:'tonto', r:'Chama o Rd agora, por favor! Eu seguro o servidor com a mão.', go:'contato'} ]},
     { t:'Quer que eu adivinhe onde você está?', o:[
       {l:'Quero', m:'tonto', data:true, r:fakeWhere},
-      {l:'Não', m:'bravo', r:'Sabia que ia dizer isso. Eu sou vidente (e estagiário).'} ]}
+      {l:'Não', m:'bravo', r:'Sabia que ia dizer isso. Eu sou vidente (e estagiário).'} ]},
+    { t:'Quer ver meus poderes de adm da página?', o:[
+      {l:'Quero ver!', m:'feliz', r:'Você pediu! Segura o monitor... vou quebrar a quarta parede.', fx:true},
+      {l:'Agora não', m:'triste', r:'Tá bom... eu guardo os poderes. Por enquanto. (São impressionantes, só avisando.)'} ]}
   ];
   /* falas soltas: ele reclama sozinho de vez em quando */
   var QUIPS = [
@@ -1303,7 +1351,7 @@ document.querySelectorAll('.card-media').forEach(function(media){
     if(!order.length){
       var a = Q.map(function(_, i){ return i; });
       for(var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
-      if(firstCycle){ a = a.filter(function(x){ return x !== 0; }); a.unshift(0); firstCycle = false; }
+      if(firstCycle){ var ADM = Q.length - 1; a = a.filter(function(x){ return x !== 0 && x !== ADM; }); a.unshift(0, ADM); firstCycle = false; }
       order = a;
     }
     return Q[order.shift()];
@@ -1386,7 +1434,7 @@ document.querySelectorAll('.card-media').forEach(function(media){
 
   function wander(){
     if(reduce) return;
-    if(isOpen || dragging || document.hidden || running){ scheduleWander(); return; }
+    if(isOpen || dragging || document.hidden || running || fxBusy){ scheduleWander(); return; }
     var maxX = Math.max(margin, vw() - size - margin);
     var maxY = Math.max(0, window.innerHeight - topPx - size - 12);
     queue = [{x:rnd(margin, maxX), y:rnd(0, maxY)}, {x:rnd(margin, maxX), y:rnd(0, maxY)}, home()];
@@ -1441,19 +1489,21 @@ document.querySelectorAll('.card-media').forEach(function(media){
     setMood(o.m, o.data ? 9000 : 5000); say(txt, o.data);
     clearTimeout(hideT); hideT = setTimeout(closeBubble, o.data ? 11000 : 5200);
     if(o.go) setTimeout(function(){ goTo(o.go); if(o.card != null) showCard(o.card); }, 1500);
-    if(o.blank && o.url) window.open(o.url, '_blank', 'noopener');
+    if(o.overlay && o.url) setTimeout(function(){ abrirOverlay(o.url); }, 1600);
+    else if(o.blank && o.url) window.open(o.url, '_blank', 'noopener');
     else if(o.url) setTimeout(function(){ location.href = o.url; }, 1600);
     if(o.menu) setTimeout(function(){ openAsk(o.menu()); }, 1100);
+    if(o.fx) setTimeout(riftShow, 2000);
     scheduleAsk(rnd(28000, 40000));
   }
   function askNow(){
-    if(isOpen || dragging || running || document.hidden){ scheduleAsk(2500); return; }
+    if(isOpen || dragging || running || fxBusy || document.hidden){ scheduleAsk(2500); return; }
     openAsk(nextQ());
   }
   function scheduleAsk(ms){ clearTimeout(askT); askT = setTimeout(askNow, ms); }
   var quipT;
   function quipNow(){
-    if(isOpen || dragging || running || document.hidden || bubble.classList.contains('show')){ scheduleQuip(4000); return; }
+    if(isOpen || dragging || running || fxBusy || document.hidden || bubble.classList.contains('show')){ scheduleQuip(4000); return; }
     var q = QUIPS[ri(0, QUIPS.length - 1)];
     if(q === quipNow.last) q = QUIPS[(QUIPS.indexOf(q) + 1) % QUIPS.length];
     quipNow.last = q;
@@ -1505,7 +1555,7 @@ document.querySelectorAll('.card-media').forEach(function(media){
   /* Jogos: menu do Astriel com os minigames */
   var gamesBtn = document.getElementById('astrielGames');
   var GAMES = { t:'Quer jogar o quê?', o:[
-    {l:'Sinuca', m:'feliz', r:'Boa! Vou pegar o taco. Prepare-se pra perder!', url:'/sinuca'},
+    {l:'Sinuca', m:'feliz', r:'Boa! Vou pegar o taco. Prepare-se pra perder!', url:'/sinuca.html', overlay:true},
     {l:'Deixa pra lá', m:'triste', r:'Tá bom... eu guardo o taco. Por enquanto.'} ]};
   gamesBtn.addEventListener('click', function(){ closeBubble(); openAsk(GAMES); });
 
@@ -1587,6 +1637,191 @@ document.querySelectorAll('.card-media').forEach(function(media){
     tr.scrollTo({left: tr.scrollLeft + c.getBoundingClientRect().left - tr.getBoundingClientRect().left - pad, behavior: reduce ? 'auto' : 'smooth'});
   }
 
+
+  /* ===== Poderes de adm: rasga o "tecido" do site, mostra o fundo Matrix e fecha ===== */
+  var fxBusy = false, rift = null;
+  var riftEl = document.getElementById('rift'), riftCv = document.getElementById('riftCanvas');
+  var riftTerm = document.getElementById('riftTerm'), riftFlash = document.getElementById('riftFlash');
+  var riftCtx = riftCv.getContext('2d'), rainCv = document.createElement('canvas'), rainCtx = rainCv.getContext('2d');
+  var T_OPEN = 1600, T_HOLD = 5700, T_EXPAND = 6900, T_AUTOCLOSE = 14500, T_CLOSE = 5000, S_MAX = 22;
+  var GLYPHS = 'ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉ0123456789<>/{}=+*';
+  var RIFT_LINES = [
+    'root@rengine:~# sudo astriel --poderes-adm',
+    '[ ok ] quebrando a quarta parede ..... feito',
+    '[ ok ] acessando document.body ....... permitido',
+    '> poderes.push("reescrever o DOM");',
+    '> poderes.push("trocar a cor do céu");',
+    '> poderes.push("fingir que bug é feature");',
+    '> demitir("Rd");',
+    '[erro] permissão negada: o Rd é o meu chefe',
+    'fechando o rasgo...'
+  ];
+  function later(fn, ms){ rift.timers.push(setTimeout(fn, ms)); }
+  function riftFlashGo(){ riftFlash.classList.remove('go'); void riftFlash.offsetWidth; riftFlash.classList.add('go'); }
+  function riftSize(){
+    var d = Math.min(window.devicePixelRatio || 1, 1.25), i;
+    rift.w = window.innerWidth; rift.h = window.innerHeight; rift.d = d;
+    riftCv.width = rainCv.width = Math.round(rift.w * d); riftCv.height = rainCv.height = Math.round(rift.h * d);
+    rift.fs = Math.round(16 * d); rift.cols = Math.ceil(rainCv.width / rift.fs); rift.drops = [];
+    for(i = 0; i < rift.cols; i++) rift.drops.push(rnd(-40, 0));
+    rainCtx.fillStyle = '#000'; rainCtx.fillRect(0, 0, rainCv.width, rainCv.height);
+  }
+  function rainStep(){
+    var fs = rift.fs, i, y;
+    rainCtx.fillStyle = 'rgba(0,0,0,.09)'; rainCtx.fillRect(0, 0, rainCv.width, rainCv.height);
+    rainCtx.font = fs + 'px monospace';
+    for(i = 0; i < rift.cols; i++){
+      y = rift.drops[i] * fs;
+      if(y > 0){
+        rainCtx.fillStyle = '#4ade80'; rainCtx.fillText(GLYPHS.charAt(ri(0, GLYPHS.length - 1)), i * fs, y - fs);
+        rainCtx.fillStyle = '#ecfdf5'; rainCtx.fillText(GLYPHS.charAt(ri(0, GLYPHS.length - 1)), i * fs, y);
+      }
+      if(y > rainCv.height && Math.random() > 0.975) rift.drops[i] = 0;
+      rift.drops[i]++;
+    }
+  }
+  /* rasgos: polígonos irregulares (lente com bordas serrilhadas) + rachaduras nas pontas */
+  function makeRips(w, h){
+    var diag = Math.sqrt(w * w + h * h), out = [];
+    var spec = [[.5,.5,-.35,1,0],[.24,.32,.6,.72,.12],[.78,.64,.25,.8,.22],[.17,.78,-.8,.6,.34],[.86,.24,-.95,.66,.42],[.58,.9,.9,.55,.5]];
+    spec.forEach(function(sp){
+      var L = diag * .42 * sp[3], W = diag * .045 * sp[3] + 8, n = 12, pts = [], cracks = [], k, t, hw;
+      for(k = 0; k <= n; k++){
+        t = -1 + 2 * k / n; hw = (k === 0 || k === n) ? 0 : W * Math.pow(1 - t * t, .7) * rnd(.45, 1.35);
+        pts.push([t * L / 2 + ((k && k < n) ? rnd(-.5, .5) * L / n * .7 : 0), hw]);
+      }
+      for(k = n - 1; k > 0; k--){
+        t = -1 + 2 * k / n; hw = W * Math.pow(1 - t * t, .7) * rnd(.45, 1.35);
+        pts.push([t * L / 2 + rnd(-.5, .5) * L / n * .7, -hw]);
+      }
+      [-1, 1].forEach(function(dir){
+        for(var c = 0; c < 2; c++){
+          var ang = (dir < 0 ? Math.PI : 0) + rnd(-.45, .45), x = dir * L / 2, y = 0, line = [[x, y]];
+          for(var q = 0; q < 6; q++){ ang += rnd(-.55, .55); x += Math.cos(ang) * L * rnd(.04, .09); y += Math.sin(ang) * L * rnd(.04, .09); line.push([x, y]); }
+          cracks.push(line);
+        }
+      });
+      out.push({cx:sp[0] * w, cy:sp[1] * h, a:sp[2], delay:sp[4], pts:pts, cracks:cracks});
+    });
+    return out;
+  }
+  function tp(r, p, s){ var c = Math.cos(r.a), n = Math.sin(r.a); return [r.cx + (p[0] * c - p[1] * n) * s, r.cy + (p[0] * n + p[1] * c) * s]; }
+  function ripPath(ctx, r, s){
+    var i, q = tp(r, r.pts[0], s);
+    ctx.moveTo(q[0], q[1]);
+    for(i = 1; i < r.pts.length; i++){ q = tp(r, r.pts[i], s); ctx.lineTo(q[0], q[1]); }
+    ctx.closePath();
+  }
+  function riftFrame(now){
+    if(!rift || rift.lite) return;
+    var t = Math.max(0, now - rift.t0), d = rift.d, ctx = riftCtx, S = [], closing = rift.tc != null, i, sc, mx = 0;
+    if(closing){
+      var c = clamp((now - rift.tc) / T_CLOSE, 0, 1);
+      if(c >= 1){ riftEnd(); return; }
+      sc = rift.s0 * Math.pow(1 - c, 1.7);
+      for(i = 0; i < rift.rips.length; i++) S.push(sc);
+    } else if(t < T_OPEN){
+      var u = t / T_OPEN;
+      rift.rips.forEach(function(r){ var p = clamp((u - r.delay) / (1 - r.delay), 0, 1); S.push(1 - Math.pow(1 - p, 3)); });
+    } else if(t < T_HOLD){
+      sc = 1 + .05 * (t - T_OPEN) / (T_HOLD - T_OPEN) + .02 * Math.sin(t / 55);
+      for(i = 0; i < rift.rips.length; i++) S.push(sc);
+    } else {
+      var v = clamp((t - T_HOLD) / (T_EXPAND - T_HOLD), 0, 1);
+      sc = 1.05 + (S_MAX - 1.05) * Math.pow(v, 2.4);
+      for(i = 0; i < rift.rips.length; i++) S.push(sc);
+    }
+    S.forEach(function(x){ if(x > mx) mx = x; });
+    if(!closing) rift.lastS = mx;
+    var covered = !closing && t >= T_EXPAND;
+    if(now - rift.lastRain > 33){ rainStep(); rift.lastRain = now; }
+
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, riftCv.width, riftCv.height);
+    if(covered){
+      ctx.drawImage(rainCv, 0, 0);
+      if(!rift.cov){
+        rift.cov = true; riftEl.classList.add('covered'); document.documentElement.classList.remove('rift-shake');
+        riftFlashGo(); startTerm(); setMood('feliz', 6000);
+        peek('Bem-vindo aos bastidores! Aqui é o fundo do site: tudo escuro, tudo verde, tudo 1 e 0.');
+      }
+    } else {
+      ctx.save(); ctx.setTransform(d, 0, 0, d, 0, 0); ctx.beginPath();
+      rift.rips.forEach(function(r, k){ if(S[k] > .001) ripPath(ctx, r, S[k]); });
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clip(); ctx.drawImage(rainCv, 0, 0); ctx.restore();
+      ctx.save(); ctx.setTransform(d, 0, 0, d, 0, 0); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      rift.rips.forEach(function(r, k){
+        var s = S[k]; if(s <= .001 || s > 8) return;
+        var pass = [[22, 'rgba(0,0,0,.35)'], [9, 'rgba(74,222,128,.18)'], [4, 'rgba(74,222,128,.55)'], [1.5, '#d1fae5']], j, m;
+        for(j = 0; j < pass.length; j++){
+          ctx.beginPath(); ripPath(ctx, r, s); ctx.lineWidth = pass[j][0]; ctx.strokeStyle = pass[j][1]; ctx.stroke();
+        }
+        ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(74,222,128,.75)'; ctx.beginPath();
+        r.cracks.forEach(function(line){
+          var q = tp(r, line[0], s); ctx.moveTo(q[0], q[1]);
+          for(m = 1; m < line.length; m++){ q = tp(r, line[m], s); ctx.lineTo(q[0], q[1]); }
+        });
+        ctx.stroke();
+      });
+      ctx.restore();
+    }
+    requestAnimationFrame(riftFrame);
+  }
+  function startTerm(){
+    var text = RIFT_LINES.join('\n'), i = 0, wait = 0;
+    riftTerm.textContent = '';
+    rift.termT = setInterval(function(){
+      if(wait-- > 0) return;
+      var ch = text.charAt(i++); riftTerm.textContent += ch; if(ch === '\n') wait = 8;
+      if(i >= text.length) clearInterval(rift.termT);
+    }, 14);
+  }
+  function riftShow(){
+    if(fxBusy) return;
+    closeBubble(); fxBusy = true;
+    clearTimeout(wanderT); clearTimeout(askT); clearTimeout(quipT);
+    goHome(); root.classList.add('fx-on');
+    riftEl.classList.remove('covered', 'closing', 'lite'); riftEl.classList.add('on'); riftEl.setAttribute('aria-hidden', 'false');
+    if(reduce){   /* sem animação: só a tela escura com o terminal */
+      rift = {lite:true, tc:null, timers:[], termT:null};
+      riftEl.classList.add('lite', 'covered'); riftTerm.textContent = RIFT_LINES.join('\n');
+      setMood('feliz', 6000); peek('Poderes de adm ativados! Sem rasgos, sem tremedeira: modo calminho.');
+      later(riftClose, 6000); return;
+    }
+    rift = {t0:performance.now(), tc:null, s0:1, cov:false, lastS:0, lastRain:0, timers:[], termT:null, rips:null};
+    riftSize(); rift.rips = makeRips(rift.w, rift.h);
+    for(var k = 0; k < 50; k++) rainStep();
+    document.documentElement.classList.add('rift-shake'); riftFlashGo();
+    setMood('bravo', 3600); peek('Rd, desculpa! Se eu quebrar o site, a culpa é do cache.');
+    later(function(){ peek('Olha só: esse "tecido" é o seu navegador. Eu sou só uma <div> com pretensão.'); }, 2100);
+    later(function(){ peek('Tá vendo essas rachaduras? É o tecido do site rasgando. Não é bug, é feature.'); }, 4100);
+    later(function(){ setMood('tonto', 3000); peek('Meus poderes de adm: mexer no DOM, trocar a cor do céu e fingir que bug é feature.'); }, 10600);
+    later(riftClose, T_AUTOCLOSE);
+    requestAnimationFrame(riftFrame);
+  }
+  function riftClose(){
+    if(!rift || rift.tc != null) return;
+    rift.timers.forEach(clearTimeout); rift.timers = []; clearInterval(rift.termT);
+    riftEl.classList.add('closing'); document.documentElement.classList.remove('rift-shake');
+    setMood('base', 2500); peek('Pronto, já fecho! Ninguém viu nada. Se perguntarem, foi o cache.');
+    if(rift.lite){ rift.tc = 1; later(riftEnd, 500); return; }
+    rift.tc = performance.now(); rift.s0 = rift.lastS || 1;
+  }
+  function riftEnd(){
+    if(!rift) return;
+    rift.timers.forEach(clearTimeout); clearInterval(rift.termT); rift = null;
+    riftEl.classList.remove('on', 'covered', 'closing', 'lite'); riftEl.setAttribute('aria-hidden', 'true');
+    riftCtx.setTransform(1, 0, 0, 1, 0, 0); riftCtx.clearRect(0, 0, riftCv.width, riftCv.height); riftTerm.textContent = '';
+    root.classList.remove('fx-on'); document.documentElement.classList.remove('rift-shake');
+    riftFlashGo(); fxBusy = false;
+    setMood('feliz', 3500); peek('Voltamos à programação normal. Ninguém viu nada, combinado?');
+    scheduleAsk(rnd(40000, 60000)); scheduleWander(); scheduleQuip(rnd(26000, 42000));
+  }
+  riftEl.addEventListener('click', riftClose);
+  riftEl.addEventListener('wheel', function(e){ e.preventDefault(); }, {passive:false});
+  riftEl.addEventListener('touchmove', function(e){ e.preventDefault(); }, {passive:false});
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && fxBusy) riftClose(); });
+  window.addEventListener('resize', function(){ if(rift && !rift.lite) riftSize(); });
+
   /* ---- puxar o Astriel: bravo (puxão), tonto (sacudir) ou os dois (sacudir por muito tempo) ---- */
   function startDrag(){
     pressed.moved = true; dragging = true;
@@ -1629,7 +1864,7 @@ document.querySelectorAll('.card-media').forEach(function(media){
     goHome();
   }
   orb.addEventListener('pointerdown', function(e){
-    if(e.button > 0) return;
+    if(e.button > 0 || fxBusy) return;
     pressed = {id:e.pointerId, sx:e.clientX, sy:e.clientY, moved:false};
     try{ orb.setPointerCapture(e.pointerId); }catch(_){}
   });
@@ -1650,7 +1885,7 @@ document.querySelectorAll('.card-media').forEach(function(media){
   }
   orb.addEventListener('pointerup', function(e){ release(e, false); });
   orb.addEventListener('pointercancel', function(e){ release(e, true); });
-  orb.addEventListener('click', function(e){ e.stopPropagation(); if(e.detail === 0) isOpen ? closeBubble() : openMenu(); });   /* teclado */
+  orb.addEventListener('click', function(e){ e.stopPropagation(); if(e.detail === 0 && !fxBusy) isOpen ? closeBubble() : openMenu(); });   /* teclado */
 
   document.addEventListener('click', function(e){ if(isOpen && !root.contains(e.target)) closeBubble(); });
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && isOpen){ closeBubble(); orb.focus(); } });
@@ -1693,6 +1928,39 @@ document.querySelectorAll('.card-media').forEach(function(media){
   track.addEventListener('scroll',function(){ if(!tick){ tick=true; requestAnimationFrame(update); } },{passive:true});
   window.addEventListener('resize',function(){ pad(); update(); });
   pad(); track.scrollLeft=0; update();
+})();
+</script>
+
+<div class="site-overlay" id="siteOverlay" aria-hidden="true">
+  <button type="button" class="site-overlay-close" id="siteOverlayClose" aria-label="Fechar">&#10005;</button>
+  <iframe id="siteOverlayFrame" class="site-overlay-frame" src="about:blank" title="Conteudo"></iframe>
+</div>
+<script>
+(function(){
+  var overlay=document.getElementById('siteOverlay'),
+      frame=document.getElementById('siteOverlayFrame'),
+      closeBtn=document.getElementById('siteOverlayClose');
+  function abrirOverlay(url){
+    frame.src=url;
+    overlay.classList.add('show');
+    overlay.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+  }
+  function fecharOverlay(){
+    overlay.classList.remove('show');
+    overlay.setAttribute('aria-hidden','true');
+    document.body.style.overflow='';
+    setTimeout(function(){ frame.src='about:blank'; }, 300);
+  }
+  closeBtn.addEventListener('click', fecharOverlay);
+  window.addEventListener('message', function(e){
+    if(e.data === 'rengine:close-overlay') fecharOverlay();
+  });
+  window.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && overlay.classList.contains('show')) fecharOverlay();
+  });
+  window.abrirOverlay = abrirOverlay;
+  window.fecharOverlay = fecharOverlay;
 })();
 </script>
 </body>
