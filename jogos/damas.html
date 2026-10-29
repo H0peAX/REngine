@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Damas com o Astriel</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--panel:#141414;--text:#f7f7f5;--dim:#9a9a9a;--line:rgba(247,247,245,.14);--line-strong:rgba(247,247,245,.32);--g:#4ade80;--red:#f87171;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:400 15px/1.5 Inter,sans-serif;-webkit-tap-highlight-color:transparent}
+button,select{font:inherit;color:inherit}
+button{cursor:pointer}
+.top{display:flex;justify-content:space-between;align-items:center;padding:14px 64px 14px 20px;border-bottom:1px solid var(--line);font:700 16px 'Space Grotesk',sans-serif}
+.top a{color:var(--dim);text-decoration:none;font:400 14px Inter,sans-serif}.top a:hover{color:var(--text)}
+main{max-width:540px;margin:0 auto;padding:14px 16px 28px}
+.set{display:grid;grid-template-columns:1.7fr 1fr auto;gap:8px;max-width:520px;margin:0 auto 10px}
+.set label{display:flex;flex-direction:column;gap:2px;font:500 10px 'JetBrains Mono',monospace;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;min-width:0}
+.set select{width:100%;padding:8px 4px;border:1px solid var(--line);background:#1c1c1c;border-radius:6px;font:600 12px Inter,sans-serif;color:var(--text)}
+.set select:focus{outline:none;border-color:var(--g)}
+.set button{align-self:end;padding:9px 14px;border:1px solid var(--g);background:rgba(74,222,128,.1);color:var(--g);border-radius:6px;font:600 13px Inter,sans-serif}
+.pl{display:flex;justify-content:space-between;align-items:center;gap:8px;max-width:520px;margin:6px auto;min-height:26px;font:500 12px 'JetBrains Mono',monospace;color:var(--dim)}
+.pl .nm{display:flex;align-items:center;gap:7px;color:var(--text);min-width:0}
+.pl .nm i{width:10px;height:10px;border-radius:50%;border:1px solid var(--line-strong);flex:none}
+.pl .nm i.w{background:#f0e6d2}.pl .nm i.b{background:#2a1c14}
+.pl .nm span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl .cap{font:12px/1 'JetBrains Mono',monospace;color:var(--dim)}
+.pl .cap em{color:var(--g);font-style:normal;margin-left:4px}
+.board{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);width:min(100%,max(330px,calc(100vh - 320px)));width:min(100%,max(330px,calc(100svh - 320px)));min-width:280px;max-width:520px;aspect-ratio:1;margin:0 auto;border:2px solid var(--line-strong);border-radius:6px;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:none;container-type:inline-size}
+.sq{min-width:0;min-height:0;position:relative;display:flex;align-items:center;justify-content:center;cursor:default}
+.sq.l{background-color:#b9cabe}.sq.d{background-color:#4f6657}
+.sq.lm{background-image:linear-gradient(rgba(74,222,128,.42),rgba(74,222,128,.42))}
+.sq.sel{background-image:linear-gradient(rgba(74,222,128,.62),rgba(74,222,128,.62))}
+.sq.mine{cursor:pointer}
+.pc{width:76%;height:76%;border-radius:50%;position:relative;z-index:1;box-shadow:0 2px 3px rgba(0,0,0,.45),inset 0 -3px 5px rgba(0,0,0,.25),inset 0 2px 3px rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;transition:transform .12s}
+.pc.w{background:radial-gradient(circle at 34% 30%,#fff9ef,#e8dcc4 70%,#cdbd98);border:1px solid #8a7a54}
+.pc.b{background:radial-gradient(circle at 34% 30%,#4a3326,#2a1c14 70%,#180f0a);border:1px solid #000}
+.pc.k::after{content:'★';font-size:max(10px,3.6cqw);color:var(--g);text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.sq.cap .pc{box-shadow:0 0 0 max(2px,.6cqw) rgba(248,113,113,.8),0 2px 3px rgba(0,0,0,.45)}
+.sq.t::after{content:'';position:absolute;width:26%;height:26%;border-radius:50%;background:rgba(74,222,128,.55);pointer-events:none}
+.sq.t.ocap::after{width:88%;height:88%;background:none;border:max(3px,.9cqw) solid rgba(250,204,21,.6)}
+.stat{max-width:520px;margin:10px auto 0;text-align:center;font:500 12px 'JetBrains Mono',monospace;color:var(--dim);min-height:18px}
+.stat.me{color:var(--g)}
+.stat .dots::after{content:'';animation:dots 1.2s steps(4) infinite}
+@keyframes dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
+.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:520px;margin:8px auto 0}
+.tools button{padding:9px 2px;border:1px solid var(--line);background:#1c1c1c;border-radius:8px;font:600 12px Inter,sans-serif;transition:.2s}
+.tools button:hover:not(:disabled){border-color:var(--g)}
+.tools button:disabled{opacity:.35;cursor:default}
+.msg{display:flex;gap:10px;align-items:flex-start;max-width:520px;margin:12px auto 0;padding:10px 12px;background:var(--panel);border:1px solid rgba(74,222,128,.3);border-radius:10px;min-height:56px}
+.msg .n{font:500 11px 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--g);white-space:nowrap;padding-top:2px}
+.msg .t{font-size:14px}
+.credit{max-width:520px;margin:14px auto 0;text-align:center;font:400 10px 'JetBrains Mono',monospace;color:#666}
+.modal{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.72)}
+.modal.show{display:flex}
+.box{background:var(--panel);border:1px solid var(--line-strong);border-radius:14px;padding:22px 24px;text-align:center;max-width:340px;width:100%}
+.box h2{margin:0 0 6px;font:700 21px 'Space Grotesk',sans-serif}
+.box p{margin:4px 0;color:var(--dim);font-size:14px}
+.box .row{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.box .row button{flex:1;min-width:90px;padding:10px 6px;border-radius:8px;border:1px solid var(--line-strong);background:#1c1c1c;font:600 13px Inter,sans-serif}
+.box .row button.pri{border-color:var(--g);color:var(--g);background:rgba(74,222,128,.1)}
+@media (max-width:380px){.top{padding-left:14px}.tools button{font-size:11px}}
+@media (prefers-reduced-motion:reduce){.stat .dots::after{animation:none;content:'...'}}
+</style></head><body>
+<div class="top"><span style="display:flex;align-items:center;gap:10px"><img src="data:image/png;base64,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" alt="R_Engine" style="width:28px;height:28px;border-radius:6px;display:block">Damas com o Astriel</span><a href="/" onclick="if(window.parent!==window){window.parent.postMessage('rengine:close-overlay','*');return false;}">← voltar ao site</a></div>
+<main>
+  <div class="set">
+    <label>Nível<select id="selLv">
+      <option value="1">Fácil</option>
+      <option value="2" selected>Médio</option>
+      <option value="3">Difícil</option>
+    </select></label>
+    <label>Você joga de<select id="selSide"><option value="w">Claras</option><option value="b">Escuras</option><option value="r">Sorteio</option></select></label>
+    <button id="bNew" type="button">Novo jogo</button>
+  </div>
+  <div class="pl" id="plTop"></div>
+  <div class="board" id="board" role="grid" aria-label="Tabuleiro de damas"></div>
+  <div class="pl" id="plBot"></div>
+  <div class="stat" id="stat"></div>
+  <div class="tools">
+    <button id="bUndo" type="button">Desfazer</button>
+    <button id="bHint" type="button">Dica</button>
+    <button id="bFlip" type="button">Virar</button>
+  </div>
+  <div class="msg"><span class="n">● Astriel</span><span class="t" id="msg"></span></div>
+  <div class="credit">Damas — regras brasileiras (captura obrigatória, dama voadora)</div>
+</main>
+<div class="modal" id="modal" role="dialog" aria-modal="true"><div class="box">
+  <h2 id="mT"></h2><p id="mA"></p><p id="mB"></p>
+  <div class="row" id="mR"></div>
+</div></div>
+<script>
+(function(){
+'use strict';
+var $ = function(id){ return document.getElementById(id); };
+var boardEl = $('board'), msgEl = $('msg'), statEl = $('stat'), modal = $('modal');
+var DEPTH = {1:2, 2:4, 3:6};
+var sqEls = [];
+
+function idx(r,c){ return r*8+c; }
+function inb(r,c){ return r>=0 && r<8 && c>=0 && c<8; }
+function owner(p){ if(!p) return null; return (p==='w'||p==='W') ? 'w' : 'b'; }
+function isKing(p){ return p==='W' || p==='B'; }
+
+function initial(){
+  var b = new Array(64).fill(null);
+  for(var r=0;r<3;r++) for(var c=0;c<8;c++) if((r+c)%2===1) b[idx(r,c)]='b';
+  for(var r2=5;r2<8;r2++) for(var c2=0;c2<8;c2++) if((r2+c2)%2===1) b[idx(r2,c2)]='w';
+  return b;
+}
+
+var DIRS = [[-1,-1],[-1,1],[1,-1],[1,1]];
+
+/* gera sequencias de captura a partir de r,c (recursivo), board mutado em copias */
+function captureSeqs(board, r, c){
+  var p = board[idx(r,c)], o = owner(p), king = isKing(p), seqs = [];
+  DIRS.forEach(function(d){
+    if(king){
+      var cr=r+d[0], cc=c+d[1], jumped=null;
+      while(inb(cr,cc) && !board[idx(cr,cc)]){ cr+=d[0]; cc+=d[1]; }
+      if(inb(cr,cc) && board[idx(cr,cc)] && owner(board[idx(cr,cc)])!==o){
+        jumped = idx(cr,cc);
+        var lr=cr+d[0], lc=cc+d[1];
+        while(inb(lr,lc) && !board[idx(lr,lc)]){
+          var nb = board.slice();
+          nb[idx(r,c)]=null; nb[jumped]=null;
+          var np = p;
+          nb[idx(lr,lc)] = np;
+          var sub = captureSeqs(nb, lr, lc);
+          if(sub.length){
+            sub.forEach(function(s){ seqs.push({to:idx(lr,lc), cap:jumped, promote:false, board:nb, chain:[{to:idx(lr,lc),cap:jumped}].concat(s.chain), final:s.board}); });
+          } else {
+            seqs.push({to:idx(lr,lc), cap:jumped, promote:false, board:nb, chain:[{to:idx(lr,lc),cap:jumped}], final:nb});
+          }
+          lr+=d[0]; lc+=d[1];
+        }
+      }
+    } else {
+      var mr=r+d[0], mc=c+d[1], lr2=r+2*d[0], lc2=c+2*d[1];
+      if(inb(mr,mc) && inb(lr2,lc2) && board[idx(mr,mc)] && owner(board[idx(mr,mc)])!==o && !board[idx(lr2,lc2)]){
+        var jcap = idx(mr,mc);
+        var nb2 = board.slice();
+        nb2[idx(r,c)]=null; nb2[jcap]=null;
+        var promo = (o==='w' && lr2===0) || (o==='b' && lr2===7);
+        var np2 = promo ? (o==='w'?'W':'B') : p;
+        nb2[idx(lr2,lc2)] = np2;
+        var sub2 = promo ? [] : captureSeqs(nb2, lr2, lc2);
+        if(sub2.length){
+          sub2.forEach(function(s){ seqs.push({to:idx(lr2,lc2), cap:jcap, promote:promo, board:nb2, chain:[{to:idx(lr2,lc2),cap:jcap}].concat(s.chain), final:s.board}); });
+        } else {
+          seqs.push({to:idx(lr2,lc2), cap:jcap, promote:promo, board:nb2, chain:[{to:idx(lr2,lc2),cap:jcap}], final:nb2});
+        }
+      }
+    }
+  });
+  return seqs;
+}
+
+function simpleMoves(board, r, c){
+  var p = board[idx(r,c)], king = isKing(p), o = owner(p), out = [];
+  DIRS.forEach(function(d){
+    if(king){
+      var cr=r+d[0], cc=c+d[1];
+      while(inb(cr,cc) && !board[idx(cr,cc)]){
+        out.push({to:idx(cr,cc)});
+        cr+=d[0]; cc+=d[1];
+      }
+    } else {
+      var fwd = (o==='w') ? -1 : 1;
+      if(d[0]===fwd){
+        var nr=r+d[0], nc=c+d[1];
+        if(inb(nr,nc) && !board[idx(nr,nc)]) out.push({to:idx(nr,nc)});
+      }
+    }
+  });
+  return out;
+}
+
+function allMoves(board, color){
+  var caps = [], moves = [];
+  for(var i=0;i<64;i++){
+    var p = board[i]; if(!p || owner(p)!==color) continue;
+    var r=(i/8)|0, c=i%8;
+    var cs = captureSeqs(board, r, c);
+    cs.forEach(function(s){ caps.push({from:i, chain:s.chain, final:s.final}); });
+  }
+  if(caps.length) return {caps:caps, forced:true};
+  for(var j=0;j<64;j++){
+    var p2 = board[j]; if(!p2 || owner(p2)!==color) continue;
+    var r2=(j/8)|0, c2=j%8;
+    simpleMoves(board, r2, c2).forEach(function(m){
+      var nb = board.slice(); var piece = nb[j]; nb[j]=null;
+      var to = m.to, tr=(to/8)|0;
+      var promo = (owner(piece)==='w' && tr===0) || (owner(piece)==='b' && tr===7);
+      nb[to] = promo ? (owner(piece)==='w'?'W':'B') : piece;
+      moves.push({from:j, chain:[{to:to,cap:null}], final:nb});
+    });
+  }
+  return {caps:[], moves:moves, forced:false};
+}
+
+function legalMoves(board, color){
+  var all = allMoves(board, color);
+  return all.forced ? all.caps : all.moves;
+}
+
+/* ---------- avaliacao / IA ---------- */
+function evalBoard(board, color){
+  var sc = 0;
+  for(var i=0;i<64;i++){
+    var p = board[i]; if(!p) continue;
+    var r=(i/8)|0;
+    var v = isKing(p) ? 300 : 100;
+    if(!isKing(p)) v += (owner(p)==='w') ? (7-r)*2 : r*2;
+    sc += (owner(p)===color) ? v : -v;
+  }
+  return sc;
+}
+var nodeCount = 0;
+function minimax(board, color, turn, depth, alpha, beta){
+  nodeCount++;
+  var moves = legalMoves(board, turn);
+  if(!moves.length) return turn===color ? -100000 : 100000;
+  if(depth===0 || nodeCount>60000) return evalBoard(board, color);
+  var other = turn==='w'?'b':'w';
+  if(turn===color){
+    var best = -Infinity;
+    for(var i=0;i<moves.length;i++){
+      var v = minimax(moves[i].final, color, other, depth-1, alpha, beta);
+      if(v>best) best=v;
+      if(v>alpha) alpha=v;
+      if(alpha>=beta) break;
+    }
+    return best;
+  } else {
+    var best2 = Infinity;
+    for(var j=0;j<moves.length;j++){
+      var v2 = minimax(moves[j].final, color, other, depth-1, alpha, beta);
+      if(v2<best2) best2=v2;
+      if(v2<beta) beta=v2;
+      if(alpha>=beta) break;
+    }
+    return best2;
+  }
+}
+function pickBest(board, color, depth){
+  var moves = legalMoves(board, color);
+  if(!moves.length) return null;
+  nodeCount = 0;
+  var best = -Infinity, bm = [], other = color==='w'?'b':'w';
+  moves.forEach(function(m){
+    var v = minimax(m.final, color, other, depth-1, -Infinity, Infinity);
+    if(v>best){ best=v; bm=[m]; } else if(v===best) bm.push(m);
+  });
+  return bm[(Math.random()*bm.length)|0];
+}
+
+/* ---------- estado do jogo ---------- */
+var board, turn, human, ai, selSq, availMoves, hist, over, lvl, flipped, thinking;
+
+function pick(a){ return a[(Math.random()*a.length)|0]; }
+function say(t){ msgEl.textContent = t; }
+
+var MSG_START = ['Vamos de damas! Captura é obrigatória por aqui.', 'Prontinho pro tabuleiro. Se puder comer, tem que comer!', 'Tabuleiro novo. Cuidado com as capturas múltiplas.'];
+var MSG_CAP_PLAYER = ['Boa captura!', 'Comeu uma peça, hein!', 'Golaço. Continua assim.'];
+var MSG_CAP_AI = ['Eu também sei comer peça, viu?', 'Essa foi minha. Fica esperto.', 'Captura do Astriel. Nada pessoal.'];
+var MSG_KING = ['Virou dama! Agora voa no tabuleiro.', 'Coroou! Cuidado com essa agora.'];
+var MSG_THINK = ['Pensando', 'Calculando', 'Analisando o tabuleiro'];
+
+function squareIndexVisual(i){
+  if(!flipped) return i;
+  var r=(i/8)|0, c=i%8;
+  return idx(7-r, 7-c);
+}
+
+function render(){
+  for(var vi=0; vi<64; vi++){
+    var i = squareIndexVisual(vi);
+    var el = sqEls[vi];
+    var r=(vi/8)|0, c=vi%8;
+    var cl = 'sq ' + ((r+c)%2===0 ? 'l' : 'd');
+    var p = board[i];
+    if(selSq===i) cl += ' sel';
+    if(availMoves && availMoves.some(function(m){return m.toSq===i;})) cl += ' t';
+    el.className = cl;
+    el.setAttribute('data-i', i);
+    if(p){
+      el.innerHTML = '<div class="pc ' + owner(p) + (isKing(p)?' k':'') + '"></div>';
+    } else el.innerHTML = '';
+    if((r+c)%2===1 && owner(p)===human) el.classList.add('mine');
+  }
+  renderPlayers();
+}
+function renderPlayers(){
+  var wc=0,bc=0; board.forEach(function(p){ if(p) (owner(p)==='w'?wc++:bc++); });
+  function row(color){
+    var isHuman = color===human;
+    return '<span class="nm"><i class="'+color+'"></i><span>'+(isHuman?'Você':'Astriel')+'</span></span><span class="cap">'+(color==='w'?wc:bc)+' peças</span>';
+  }
+  var top = flipped ? human : ai, bot = flipped ? ai : human;
+  $('plTop').innerHTML = row(top);
+  $('plBot').innerHTML = row(bot);
+}
+
+function clearSel(){ selSq=null; availMoves=null; }
+
+function squareClick(i){
+  if(over || thinking || turn!==human) return;
+  var p = board[i];
+  if(selSq!=null && availMoves){
+    var mv = availMoves.find(function(m){ return m.toSq===i; });
+    if(mv){ playMove(mv.move); return; }
+  }
+  if(p && owner(p)===human){
+    var allM = legalMoves(board, human);
+    var mine = allM.filter(function(m){ return m.from===i; });
+    if(!mine.length){ clearSel(); render(); return; }
+    selSq = i;
+    availMoves = mine.map(function(m){ return {toSq:m.chain[m.chain.length-1].to, move:m}; });
+    render();
+  } else { clearSel(); render(); }
+}
+
+function playMove(m){
+  var captured = m.chain.some(function(x){ return x.cap!=null; });
+  var wasKing = isKing(board[m.from]);
+  hist.push(board.slice());
+  board = m.final;
+  var becameKing = (function(){ var toP = board[m.chain[m.chain.length-1].to]; return isKing(toP) && !wasKing; })();
+  clearSel();
+  var next = turn==='w' ? 'b' : 'w';
+  if(captured) say(turn===human ? pick(MSG_CAP_PLAYER) : pick(MSG_CAP_AI));
+  else if(becameKing) say(pick(MSG_KING));
+  turn = next;
+  render();
+  checkEnd();
+  if(!over) nextTurn();
+}
+
+function nextTurn(){
+  if(turn===ai){ aiMove(); }
+  else { statEl.textContent = 'Sua vez'; statEl.className='stat me'; }
+}
+
+function aiMove(){
+  statEl.innerHTML = '<span class="dots">'+pick(MSG_THINK)+'</span>';
+  statEl.className='stat';
+  thinking = true;
+  setTimeout(function(){
+    var m = pickBest(board, ai, DEPTH[lvl]);
+    thinking = false;
+    if(!m){ checkEnd(); return; }
+    playMove(m);
+    if(!over) statEl.textContent = 'Sua vez', statEl.className='stat me';
+  }, 260);
+}
+
+function checkEnd(){
+  var mv = legalMoves(board, turn);
+  if(!mv.length){
+    over = true;
+    var winner = turn===human ? ai : human;
+    var youWin = winner===human;
+    statEl.textContent = '';
+    say(youWin ? pick(['Perdi! Bem jogado.', 'Fui dominado. Parabéns!']) : pick(['Vitória do Astriel! Tenta de novo?', 'Ganhei essa. Revanche?']));
+    setTimeout(function(){
+      openModal(youWin ? 'Você venceu!' : 'Astriel venceu', youWin?'Sem mais jogadas para o Astriel.':'Sem mais jogadas para você.', '',
+        [['Ver tabuleiro', function(){}], ['Novo jogo', function(){ newGame(); }, 1]]);
+    }, 700);
+  }
+}
+
+function openModal(title, a, b, btns){
+  $('mT').textContent = title; $('mA').textContent = a; $('mB').textContent = b;
+  var r = $('mR'); r.innerHTML = '';
+  btns.forEach(function(x){
+    var el = document.createElement('button'); el.type='button'; el.textContent=x[0]; if(x[2]) el.className='pri';
+    el.addEventListener('click', function(){ modal.classList.remove('show'); x[1](); });
+    r.appendChild(el);
+  });
+  modal.classList.add('show');
+}
+
+function undo(){
+  if(thinking || hist.length<2) return;
+  board = hist[hist.length-2]; hist.length = Math.max(0, hist.length-2);
+  over = false; clearSel();
+  turn = human; render(); statEl.textContent='Sua vez'; statEl.className='stat me';
+  say('Desfiz duas jogadas pra você poder tentar de novo.');
+}
+
+function hint(){
+  if(over || thinking || turn!==human) return;
+  var m = pickBest(board, human, Math.min(DEPTH[lvl]+1, 6));
+  if(!m) return;
+  selSq = m.from;
+  availMoves = [{toSq:m.chain[m.chain.length-1].to, move:m}];
+  render();
+  say(pick(['Essa jogada parece boa. Confia.', 'Eu jogaria assim. Mas a decisão é sua.']));
+}
+
+function flip(){ flipped = !flipped; clearSel(); render(); }
+
+function newGame(){
+  board = initial();
+  var sideSel = $('selSide').value;
+  human = sideSel==='r' ? (Math.random()<0.5?'w':'b') : sideSel;
+  ai = human==='w' ? 'b' : 'w';
+  turn = 'w';
+  lvl = $('selLv').value;
+  hist = [board.slice()];
+  over = false; thinking = false;
+  flipped = (human==='b');
+  clearSel();
+  render();
+  say(pick(MSG_START));
+  statEl.textContent = turn===human ? 'Sua vez' : '';
+  statEl.className = turn===human ? 'stat me' : 'stat';
+  if(turn!==human) nextTurn();
+}
+
+/* ---------- montagem ---------- */
+(function build(){
+  var h = '';
+  for(var i=0;i<64;i++) h += '<div class="sq" data-i="'+i+'"></div>';
+  boardEl.innerHTML = h;
+  sqEls = Array.prototype.slice.call(boardEl.children);
+})();
+boardEl.addEventListener('click', function(e){
+  var el = e.target.closest('.sq'); if(!el) return;
+  squareClick(+el.getAttribute('data-i'));
+});
+$('bNew').addEventListener('click', newGame);
+$('bUndo').addEventListener('click', undo);
+$('bHint').addEventListener('click', hint);
+$('bFlip').addEventListener('click', flip);
+
+newGame();
+try{ window.focus(); }catch(e){}
+})();
+</script>
+</body></html>
