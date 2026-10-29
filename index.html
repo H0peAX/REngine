@@ -1555,7 +1555,10 @@ document.querySelectorAll('.card-media').forEach(function(media){
   /* Jogos: menu do Astriel com os minigames */
   var gamesBtn = document.getElementById('astrielGames');
   var GAMES = { t:'Quer jogar o quê?', o:[
-    {l:'Sinuca', m:'feliz', r:'Boa! Vou pegar o taco. Prepare-se pra perder!', url:'/sinuca.html', overlay:true},
+    {l:'Sinuca', m:'feliz', r:'Boa! Vou pegar o taco. Prepare-se pra perder!', url:'/jogos/sinuca.html', overlay:true},
+    {l:'Xadrez', m:'tonto', r:'Xadrez! Dá pra escolher até o nível Magnus Carlsen. Eu não me responsabilizo pelo seu ego.', url:'/jogos/xadrez.html', overlay:true},
+    {l:'Sudoku', m:'feliz', r:'Sudoku! Eu já sei todas as respostas, mas não conto. Só se você pedir dica.', url:'/jogos/sudoku.html', overlay:true},
+    {l:'Damas', m:'tonto', r:'Damas! Captura obrigatória, viu? Não vale fingir que não viu a peça.', url:'/jogos/damas.html', overlay:true},
     {l:'Deixa pra lá', m:'triste', r:'Tá bom... eu guardo o taco. Por enquanto.'} ]};
   gamesBtn.addEventListener('click', function(){ closeBubble(); openAsk(GAMES); });
 
